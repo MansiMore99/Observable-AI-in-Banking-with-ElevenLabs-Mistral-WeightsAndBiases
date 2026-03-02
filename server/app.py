@@ -31,14 +31,20 @@ WANDB_PROJECT      = os.environ.get("WANDB_PROJECT", "mistral-hackathon")
 # W&B Weave — tracing
 # ---------------------------------------------------------------------------
 WEAVE_ENABLED = False
+RESOLVED_ENTITY = WANDB_ENTITY  # fallback; overwritten after login below
 try:
     import wandb
     import weave
     if WANDB_API_KEY:
         wandb.login(key=WANDB_API_KEY, relogin=True)
-        weave.init(WANDB_PROJECT)
+        # Resolve the actual entity from the API key so the URL is always correct
+        try:
+            RESOLVED_ENTITY = wandb.Api().default_entity or WANDB_ENTITY
+        except Exception:
+            pass
+        weave.init(f"{RESOLVED_ENTITY}/{WANDB_PROJECT}")
         WEAVE_ENABLED = True
-        logger.info(f"Weave tracing active → {WANDB_ENTITY}/{WANDB_PROJECT}")
+        logger.info(f"Weave tracing active → {RESOLVED_ENTITY}/{WANDB_PROJECT}")
 except Exception as e:
     logger.warning(f"Weave not available: {e}")
 
@@ -192,12 +198,12 @@ def transcribe():
 
 @app.route("/api/wb-url", methods=["GET"])
 def get_wb_url():
-    """Return the W&B Weave traces URL."""
-    if WANDB_ENTITY and WANDB_PROJECT:
-        url = f"https://wandb.ai/{WANDB_ENTITY}/{WANDB_PROJECT}/weave/calls"
+    """Return the W&B Weave traces URL using the resolved (actual) entity."""
+    if RESOLVED_ENTITY and WANDB_PROJECT:
+        url = f"https://wandb.ai/{RESOLVED_ENTITY}/{WANDB_PROJECT}/weave"
     else:
         url = None
-    return jsonify({"url": url}), 200
+    return jsonify({"url": url, "entity": RESOLVED_ENTITY, "project": WANDB_PROJECT}), 200
 
 
 @app.route("/api/log-demo", methods=["POST"])
@@ -282,6 +288,6 @@ if __name__ == "__main__":
     print(f"  STT:        ElevenLabs {'OK' if ELEVENLABS_API_KEY else 'MISSING KEY'}")
     print(f"  Server:     http://localhost:5001")
     if WEAVE_ENABLED:
-        print(f"  Traces:     https://wandb.ai/{WANDB_ENTITY}/{WANDB_PROJECT}/weave/calls")
+        print(f"  Traces:     https://wandb.ai/{RESOLVED_ENTITY}/{WANDB_PROJECT}/weave")
     print("=" * 60)
     app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)

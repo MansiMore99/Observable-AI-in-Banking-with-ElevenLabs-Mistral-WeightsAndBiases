@@ -21,9 +21,12 @@ fi
 echo "🔧 Activating virtual environment..."
 source "$VENV_DIR/bin/activate"
 
+PYTHON="$VENV_DIR/bin/python3"
+PIP="$VENV_DIR/bin/pip"
+
 # Install dependencies
 echo "📦 Installing dependencies..."
-pip install -q -r "$SCRIPT_DIR/requirements.txt"
+"$PIP" install -q -r "$SCRIPT_DIR/requirements.txt"
 
 # Load .env from project root
 ENV_FILE="$SCRIPT_DIR/../.env"
@@ -36,4 +39,4 @@ fi
 
 # Start the server
 echo ""
-python "$SCRIPT_DIR/app.py"
+"$PYTHON" "$SCRIPT_DIR/app.py"

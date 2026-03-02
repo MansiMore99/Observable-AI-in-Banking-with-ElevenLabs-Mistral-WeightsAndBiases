@@ -20,16 +20,26 @@ export const initializeChat = () => {
 export const sendMessage = async (message: string, sessionId?: string): Promise<string> => {
   conversationHistory.push({ role: 'user', content: message });
 
-  const response = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      messages: conversationHistory,
-      session_id: sessionId,
-    }),
-  });
+  let response: Response;
+  try {
+    response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: conversationHistory,
+        session_id: sessionId,
+      }),
+    });
+  } catch {
+    throw new Error('Backend not reachable. Start the server: cd server && bash start.sh');
+  }
 
-  const data = await response.json();
+  let data: any;
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error('Backend not running. Start the Flask server: cd server && bash start.sh');
+  }
 
   if (!data.success) {
     throw new Error(data.error || 'Chat request failed');
