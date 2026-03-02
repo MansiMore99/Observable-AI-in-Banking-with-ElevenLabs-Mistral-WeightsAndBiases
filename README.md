@@ -1,4 +1,4 @@
-## AI-Powered-Banking-Chatbot-with-LLM-Observability
+## AI-Powered Banking Assistant with LLM Observability
 
 <img width="1300" height="723" alt="image" src="https://github.com/user-attachments/assets/f0e80d04-5de0-4345-887b-a46c2f5984d8" />
 
