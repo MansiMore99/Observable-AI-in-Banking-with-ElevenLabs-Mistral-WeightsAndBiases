@@ -1,6 +1,6 @@
 ## AI-Powered-Banking-Chatbot-with-LLM-Observability
 
-<img width="1309" height="745" alt="image" src="https://github.com/user-attachments/assets/3fc3739a-7def-4663-8c34-3dfcef669815" />
+<img width="1307" height="741" alt="image" src="https://github.com/user-attachments/assets/4e5fea05-035c-4bb5-9ebe-7bde85fbbc31" />
 
 A production-ready banking chatbot built with Mistral LLM, ElevenLabs STT, and W&amp;B Weave, designed not just to answer banking questions, but to catch when AI goes wrong.
 
